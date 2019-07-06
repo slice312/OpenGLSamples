@@ -133,6 +133,7 @@ int main()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), nullptr);
 	glEnableVertexAttribArray(0);
 
+	//Unbind, it's always a good thing to unbind any buffer/array to prevent strange bugs.
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
@@ -144,16 +145,17 @@ int main()
 		//Check if any events have been activated.
 		glfwPollEvents();
 
-		//handle game logic
 
 		//Render.
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
+
 		glUseProgram(shadeProgram);
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 		glBindVertexArray(0);
+
 
 		//draw OpenGL
 		glfwSwapBuffers(window);
