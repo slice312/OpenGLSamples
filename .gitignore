@@ -1,0 +1,8 @@
+#Visual Studio:
+.vs/
+*.user
+*.log
+bin/
+obj/
+x64/
+Debug/
