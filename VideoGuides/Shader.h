@@ -7,15 +7,15 @@
 class Shader
 {
 public:
-	const GLuint program;
+    const GLuint program;
 
-	// Constructor generates the shader on the fly.
-	Shader(const std::string& vertexPath, const std::string& fragmentPath);
+    //Constructor generates the shader on the fly.
+    Shader(const std::string& vertexPath, const std::string& fragmentPath);
 
-	~Shader();
+    ~Shader();
 
-	// Uses the current shader program.
-	void use() const;
+    //Uses the current shader program.
+    void use() const;
 };
 
 
