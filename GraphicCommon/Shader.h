@@ -7,16 +7,24 @@
 
 class Shader
 {
+private:
+    const GLchar* vertexShaderSrc;
+    const GLchar* fragmentShaderSrc;
+
 public:
     const GLuint program;
 
     //Constructor generates the shader on the fly.
     Shader(const std::string& vertexPath, const std::string& fragmentPath);
-
     ~Shader();
 
     //Uses the current shader program.
-    void use() const;
+    void useProgram() const;
+
+private:
+
+    void loadFromFiles(const std::string& vertexPath, const std::string& fragmentPath);
+
 };
 
 

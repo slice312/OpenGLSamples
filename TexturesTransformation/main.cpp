@@ -38,11 +38,10 @@ int main()
         glfwTerminate();
         return EXIT_FAILURE;
     }
-
-    int screenWidth, screenHeight;
-    glfwGetFramebufferSize(window, &screenWidth, &screenHeight);
     glfwMakeContextCurrent(window);
     glfwSetWindowPos(window, 200, 100);
+
+  
 
     //Set this to true so GLEW knows to use a modern approach to retrieving function pointers and extensions.
     glewExperimental = GL_TRUE;
@@ -52,9 +51,10 @@ int main()
         return EXIT_FAILURE;
     }
 
-    //Define the viewport dimensions.
+    int screenWidth, screenHeight;
+    glfwGetFramebufferSize(window, &screenWidth, &screenHeight);
     glViewport(0, 0, screenWidth, screenHeight);
-#pragma endregion GLFW initialization
+#pragma endregion
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -155,7 +155,7 @@ int main()
 
 
         //Draw the triangle.
-        shader.use();
+        shader.useProgram();
 
         glm::mat4 transform(1);
         transform = glm::translate(transform, glm::vec3(0.2f, -0.3f, 0.0f));

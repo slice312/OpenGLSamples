@@ -42,6 +42,7 @@ int main()
     if (glewInit() != GLEW_OK)
     {
         std::cout << "Failed to initialize GLEW" << std::endl;
+        glfwTerminate();
         return EXIT_FAILURE;
     }
 
@@ -84,14 +85,13 @@ int main()
     // 4 параметр - нормализация;
     // 5 параметр - шаг (stride), смещение умноженное на номер вершины (первая вершина индекс 0);
     // 6 параметр - доп смещение (offset). Итоговое смещение определяется так: vertIndex * stride + offset;
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), nullptr);
-    glEnableVertexAttribArray(0);   
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*) 0);
+    glEnableVertexAttribArray(0);
 
     //Color attribute.
     //Тут в 6 параметре смещение 3, потому что массиве vertices[]
     //  цвета записаны с начальным смещением на 3 элемента.
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat),
-                          reinterpret_cast<void*>(3 * sizeof(GLfloat)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*) (3 * sizeof(GLfloat)));
     glEnableVertexAttribArray(1);
 
     //Unbind, it's always a good thing to unbind any buffer/array to prevent strange bugs.
@@ -111,7 +111,7 @@ int main()
 
 
         //Draw.
-        shader.use();
+        shader.useProgram();
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
         glBindVertexArray(0);

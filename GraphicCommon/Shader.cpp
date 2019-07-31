@@ -9,41 +9,8 @@
 Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath) :
     program(glCreateProgram())
 {
-    std::string vertexCode;
-    std::string fragmentCode;
+    this->loadFromFiles(vertexPath, fragmentPath);
 
-#pragma region READ_FILES
-    {
-        std::ifstream vShaderFile;
-        std::ifstream fShaderFile;
-        //Гарантирует, что объекты потока могут генерировать исключения.
-        vShaderFile.exceptions(std::ifstream::badbit);
-        fShaderFile.exceptions(std::ifstream::badbit);
-        try
-        {
-            vShaderFile.open(vertexPath);
-            fShaderFile.open(fragmentPath);
-            std::stringstream vShaderStream, fShaderStream;
-
-            vShaderStream << vShaderFile.rdbuf();
-            fShaderStream << fShaderFile.rdbuf();
-
-            vShaderFile.close();
-            fShaderFile.close();
-
-            //Convert stream into string.
-            vertexCode = vShaderStream.str();
-            fragmentCode = fShaderStream.str();
-        }
-        catch (std::ifstream::failure&)
-        {
-            std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
-        }
-    }
-#pragma endregion
-
-    const GLchar* vertexShaderSrc = vertexCode.c_str();
-    const GLchar* fragmentShaderSrc = fragmentCode.c_str();
 
 #pragma region COMPILE_AND_LINK_SHADER_PROGRAM
     GLint success;
@@ -51,8 +18,8 @@ Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath) :
 
     // 1) Vertex Shader.
     GLuint vertex = glCreateShader(GL_VERTEX_SHADER);
+    // 2 параметр, количество строк.
     // 4 параметр тут означает что это null-terminated строка.
-    // 2 параметр, количество строк в 3-ем параметре.
     glShaderSource(vertex, 1, &vertexShaderSrc, nullptr);
     glCompileShader(vertex);
 
@@ -102,7 +69,36 @@ Shader::~Shader()
 }
 
 
-void Shader::use() const
+void Shader::useProgram() const
 {
     glUseProgram(this->program);
+}
+
+
+void Shader::loadFromFiles(const std::string& vertexPath, const std::string& fragmentPath)
+{
+    std::ifstream vShaderFile;
+    std::ifstream fShaderFile(fragmentPath);
+    //Гарантирует, что объекты потока могут генерировать исключения.
+    vShaderFile.exceptions(std::ifstream::badbit);
+    fShaderFile.exceptions(std::ifstream::badbit);
+    try
+    {
+        vShaderFile.open(vertexPath);
+        std::stringstream vShaderStream, fShaderStream;
+        vShaderStream << vShaderFile.rdbuf();
+        fShaderStream << fShaderFile.rdbuf();
+
+        vShaderFile.close();
+        fShaderFile.close();
+
+        std::string str = vShaderStream.str();
+        //Convert stream into string (const char*).
+        this->vertexShaderSrc = str.c_str();
+        this->fragmentShaderSrc = fShaderStream.str().c_str();
+    }
+    catch (std::ifstream::failure&)
+    {
+        std::cout << "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ" << std::endl;
+    }
 }
