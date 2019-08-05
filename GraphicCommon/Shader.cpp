@@ -1,7 +1,7 @@
-#include <string>
-#include <fstream>
 #include <iostream>
+#include <fstream>
 #include <sstream>
+#include <cstdarg>
 
 #include "Shader.h"
 
@@ -9,57 +9,80 @@
 Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath) :
     program(glCreateProgram())
 {
-    this->loadFromFiles(vertexPath, fragmentPath);
+    GLuint vertex = compileShader(vertexPath, GL_VERTEX_SHADER);
+    GLuint fragment = compileShader(fragmentPath, GL_FRAGMENT_SHADER);
+    linkProgram(2, vertex, fragment);
+}
 
 
-#pragma region COMPILE_AND_LINK_SHADER_PROGRAM
-    GLint success;
-    GLchar infoLog[512];
+GLuint Shader::compileShader(const std::string& path, GLenum type)
+{
+    std::string src = getSourceFromFile(path);
+    const GLchar* c_str_src = src.c_str();
 
-    // 1) Vertex Shader.
-    GLuint vertex = glCreateShader(GL_VERTEX_SHADER);
+    GLuint shader = glCreateShader(type);
     // 2 параметр, количество строк.
     // 4 параметр тут означает что это null-terminated строка.
-    glShaderSource(vertex, 1, &vertexShaderSrc, nullptr);
-    glCompileShader(vertex);
+    glShaderSource(shader, 1, &c_str_src, nullptr);
+    glCompileShader(shader);
 
-    //Returns a parameter from a shader object.
-    glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);
+    GLint success;
+    GLchar infoLog[512];
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
     if (!success)
     {
-        glGetShaderInfoLog(vertex, 512, nullptr, infoLog);
-        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+        glGetShaderInfoLog(shader, 512, nullptr, infoLog);
+        std::cout << "ERROR::SHADER::" + defineName(type)
+            + "::COMPILATION_FAILED\n" << infoLog << std::endl;
     }
+    
+    return shader;
+}
 
-    // 2) Fragment Shader.
-    GLuint fragment = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragment, 1, &fragmentShaderSrc, nullptr);
-    glCompileShader(fragment);
 
-    glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
-    if (!success)
+std::string Shader::getSourceFromFile(const std::string& path)
+{
+    std::ifstream shaderFile;
+    shaderFile.exceptions(std::ifstream::badbit);
+    try
     {
-        glGetShaderInfoLog(fragment, 512, nullptr, infoLog);
-        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
+        shaderFile.open(path);
+        std::stringstream stream;
+        stream << shaderFile.rdbuf();
+        shaderFile.close();
+        return stream.str();
     }
+    catch (std::ifstream::failure&)
+    {
+        std::cout << "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ" << std::endl;
+        std::cout << "FILE: " << path << std::endl;
+        return "";
+    }
+}
 
-    // 3) Shader program.
-    glAttachShader(this->program, vertex);
-    glAttachShader(this->program, fragment);
+
+void Shader::linkProgram(int count, GLuint shaders...)
+{
+    va_list args;
+    va_start(args, count);
+    for (int i = 0; i < count; i++)
+    {
+        GLuint shader = va_arg(args, GLuint);
+        glAttachShader(this->program, shader);
+        glDeleteShader(shader); //Delete the shaders as the program has them now.
+    }
+    va_end(args);
+
     glLinkProgram(this->program);
-
     //Returns a parameter from a program object.
+    GLint success;
+    GLchar infoLog[512];
     glGetProgramiv(this->program, GL_LINK_STATUS, &success);
     if (!success)
     {
         glGetProgramInfoLog(this->program, 512, nullptr, infoLog);
         std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
     }
-
-    //Delete the shaders as the program has them now.
-    glDeleteShader(vertex);
-    glDeleteShader(fragment);
-#pragma endregion
 }
 
 
@@ -75,30 +98,15 @@ void Shader::useProgram() const
 }
 
 
-void Shader::loadFromFiles(const std::string& vertexPath, const std::string& fragmentPath)
+std::string Shader::defineName(GLenum enm)
 {
-    std::ifstream vShaderFile;
-    std::ifstream fShaderFile(fragmentPath);
-    //Гарантирует, что объекты потока могут генерировать исключения.
-    vShaderFile.exceptions(std::ifstream::badbit);
-    fShaderFile.exceptions(std::ifstream::badbit);
-    try
+    switch (enm)
     {
-        vShaderFile.open(vertexPath);
-        std::stringstream vShaderStream, fShaderStream;
-        vShaderStream << vShaderFile.rdbuf();
-        fShaderStream << fShaderFile.rdbuf();
-
-        vShaderFile.close();
-        fShaderFile.close();
-
-        std::string str = vShaderStream.str();
-        //Convert stream into string (const char*).
-        this->vertexShaderSrc = str.c_str();
-        this->fragmentShaderSrc = fShaderStream.str().c_str();
-    }
-    catch (std::ifstream::failure&)
-    {
-        std::cout << "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ" << std::endl;
+    case GL_VERTEX_SHADER:
+        return "VERTEX";
+    case GL_FRAGMENT_SHADER:
+        return "FRAGMENT";
+    default:
+        return "";
     }
 }

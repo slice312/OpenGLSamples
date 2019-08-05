@@ -24,7 +24,6 @@ int main()
 {
 #pragma region INIT
     glfwInit();
-    //Set all the required options for GLFW.
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -41,9 +40,6 @@ int main()
     glfwMakeContextCurrent(window);
     glfwSetWindowPos(window, 200, 100);
 
-  
-
-    //Set this to true so GLEW knows to use a modern approach to retrieving function pointers and extensions.
     glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK)
     {

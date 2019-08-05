@@ -4,13 +4,12 @@
 #define GLEW_STATIC
 #include <GL/glew.h>
 
+#include <string>
+
+
 
 class Shader
 {
-private:
-    const GLchar* vertexShaderSrc;
-    const GLchar* fragmentShaderSrc;
-
 public:
     const GLuint program;
 
@@ -23,8 +22,12 @@ public:
 
 private:
 
-    void loadFromFiles(const std::string& vertexPath, const std::string& fragmentPath);
+    static GLuint compileShader(const std::string& path, GLenum type);
+    void linkProgram(int count, GLuint shaders...);
+    
+    static std::string getSourceFromFile(const std::string& path);
 
+    static std::string defineName(GLenum enm);
 };
 
 
