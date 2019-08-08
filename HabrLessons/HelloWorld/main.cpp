@@ -9,6 +9,7 @@
 
 #include "Shader.h"
 
+
 void keyCallback(GLFWwindow* window, int key, int scanCode, int action, int mode);
 
 
@@ -64,17 +65,18 @@ int main()
 
     GLuint VBO, VAO;
     glGenBuffers(1, &VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
 
-    // 0. Копируем массив с вершинами в буфер OpenGL
+    glBindVertexArray(VAO);
+    // 0. Копируем массив с вершинами в буфер OpenGL.
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    // 1. Затем установим указатели на вершинные атрибуты
+    // 1. Затем установим указатели на вершинные атрибуты.
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*) 0);
     glEnableVertexAttribArray(0);
-    // 2. Используем нашу шейдерную программу
-    // 4. Отвязываем VAO
+    // 2. Используем нашу шейдерную программу.
+    shader.useProgram();
+    // 4. Отвязываем VAO.
     glBindVertexArray(0);
 
 #pragma region GAME LOOP
@@ -85,7 +87,6 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        shader.useProgram();
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
