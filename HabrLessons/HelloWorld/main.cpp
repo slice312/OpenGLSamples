@@ -16,6 +16,35 @@ void keyCallback(GLFWwindow* window, int key, int scanCode, int action, int mode
 static const GLuint WIDTH = 800, HEIGHT = 600;
 
 
+
+GLuint anotherVAO()
+{
+    
+
+    GLfloat vertices[] = {
+        0.0f, -0.5f, 0.0f,
+        0.5f, -0.5f, 0.0f,
+        0.0f, 0.5f, 0.0f
+    };
+
+
+    GLuint VBO, VAO;
+    glGenBuffers(1, &VBO);
+    glGenVertexArrays(1, &VAO);
+
+    // 1. Привязываем VAO.
+    glBindVertexArray(VAO);
+    // 2. Копируем массив вершин в буфер для OpenGL.
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    // 3. Устанавливаем указатели на вершинные атрибуты.
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+    glEnableVertexAttribArray(0);
+    // 4. Отвязываем VAO.
+    glBindVertexArray(0);
+    return VAO;
+}
+
 int main()
 {
 #pragma region INIT
@@ -67,18 +96,22 @@ int main()
     glGenBuffers(1, &VBO);
     glGenVertexArrays(1, &VAO);
 
+    // 1. Привязываем VAO.
     glBindVertexArray(VAO);
-    // 0. Копируем массив с вершинами в буфер OpenGL.
+    // 2. Копируем массив вершин в буфер для OpenGL.
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    // 1. Затем установим указатели на вершинные атрибуты.
+    // 3. Устанавливаем указатели на вершинные атрибуты.
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*) 0);
     glEnableVertexAttribArray(0);
-    // 2. Используем нашу шейдерную программу.
-    shader.useProgram();
     // 4. Отвязываем VAO.
     glBindVertexArray(0);
 
+
+    GLuint anvao = anotherVAO();
+
+
+    bool flag = false;
 #pragma region GAME LOOP
     while (!glfwWindowShouldClose(window))
     {
@@ -87,11 +120,27 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        shader.useProgram();
+        if (flag)
+        {
+            flag = false;
+            glBindVertexArray(VAO);
+            glDrawArrays(GL_TRIANGLES, 0, 3);
 
-        glfwSwapBuffers(window);
-        glBindVertexArray(0);
+            glfwSwapBuffers(window);
+            glBindVertexArray(0);
+        }
+        else
+        {
+            flag = true;
+            glBindVertexArray(anvao);
+            glDrawArrays(GL_TRIANGLES, 0, 3);
+
+            glfwSwapBuffers(window);
+            glBindVertexArray(anvao);
+                
+        }
+
     }
 #pragma endregion
 
