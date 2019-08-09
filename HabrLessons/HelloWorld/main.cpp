@@ -17,34 +17,6 @@ static const GLuint WIDTH = 800, HEIGHT = 600;
 
 
 
-GLuint anotherVAO()
-{
-    
-
-    GLfloat vertices[] = {
-        0.0f, -0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f,
-        0.0f, 0.5f, 0.0f
-    };
-
-
-    GLuint VBO, VAO;
-    glGenBuffers(1, &VBO);
-    glGenVertexArrays(1, &VAO);
-
-    // 1. Привязываем VAO.
-    glBindVertexArray(VAO);
-    // 2. Копируем массив вершин в буфер для OpenGL.
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    // 3. Устанавливаем указатели на вершинные атрибуты.
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
-    glEnableVertexAttribArray(0);
-    // 4. Отвязываем VAO.
-    glBindVertexArray(0);
-    return VAO;
-}
-
 int main()
 {
 #pragma region INIT
@@ -77,23 +49,31 @@ int main()
     glViewport(0, 0, screenWidth, screenHeight);
 #pragma endregion
 
-    
-    glfwSetKeyCallback(window, keyCallback);
 
+    glfwSetKeyCallback(window, keyCallback);
 
     Shader shader("resources/shaders/core.vert",
                   "resources/shaders/core.frag");
 
-
+    // @formatter:off 
     GLfloat vertices[] = {
-        -0.5f, -0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f,
-        0.0f, 0.5f, 0.0f
+         0.5f,  0.5f, 0.0f, // Верхний правый угол
+         0.5f, -0.5f, 0.0f, // Нижний правый угол
+        -0.5f, -0.5f, 0.0f, // Нижний левый угол
+        -0.5f,  0.5f, 0.0f  // Верхний левый угол
     };
 
+    GLuint indices[] = {
+        // Помните, что мы начинаем с 0!
+        0, 1, 3, // Первый треугольник
+        1, 2, 3  // Второй треугольник
+    };
+    // @formatter:on 
 
-    GLuint VBO, VAO;
+
+    GLuint VBO, EBO, VAO;
     glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
     glGenVertexArrays(1, &VAO);
 
     // 1. Привязываем VAO.
@@ -101,17 +81,18 @@ int main()
     // 2. Копируем массив вершин в буфер для OpenGL.
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    // 2.1 Копируем массив индексов вершин.
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+
     // 3. Устанавливаем указатели на вершинные атрибуты.
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*) 0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
     glEnableVertexAttribArray(0);
     // 4. Отвязываем VAO.
     glBindVertexArray(0);
 
 
-    GLuint anvao = anotherVAO();
-
-
-    bool flag = false;
 #pragma region GAME LOOP
     while (!glfwWindowShouldClose(window))
     {
@@ -121,26 +102,11 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
 
         shader.useProgram();
-        if (flag)
-        {
-            flag = false;
-            glBindVertexArray(VAO);
-            glDrawArrays(GL_TRIANGLES, 0, 3);
-
-            glfwSwapBuffers(window);
-            glBindVertexArray(0);
-        }
-        else
-        {
-            flag = true;
-            glBindVertexArray(anvao);
-            glDrawArrays(GL_TRIANGLES, 0, 3);
-
-            glfwSwapBuffers(window);
-            glBindVertexArray(anvao);
-                
-        }
-
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glBindVertexArray(0);
+        
+        glfwSwapBuffers(window);
     }
 #pragma endregion
 
