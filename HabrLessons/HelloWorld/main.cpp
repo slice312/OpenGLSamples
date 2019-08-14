@@ -93,7 +93,7 @@ int main()
 
 
     //Режим Wireframe.
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //Для отрисовки только линий, без заливки.
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //Для отрисовки только линий, без заливки.
     // glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); //Вернуть назад.
 
 
