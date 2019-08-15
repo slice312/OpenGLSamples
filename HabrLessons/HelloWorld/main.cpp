@@ -91,7 +91,6 @@ int main()
     glBindVertexArray(0);
 
 
-
     //Режим Wireframe.
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //Для отрисовки только линий, без заливки.
     // glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); //Вернуть назад.
@@ -106,8 +105,13 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
 
         shader.useProgram();
+
+        GLfloat time = glfwGetTime();
+        GLfloat greenValue = abs(sin(std::fmod(time * 12, 1.0f) + 0.0f));
+        GLint vertexColorLocation = glGetUniformLocation(shader.program, "ourColor");
+        glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+
         glBindVertexArray(VAO);
-        // glDrawArrays(GL_TRIANGLES, 0, 3);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (GLvoid*)0);
         glBindVertexArray(0);
 
