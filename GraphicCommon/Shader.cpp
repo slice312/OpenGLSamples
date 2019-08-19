@@ -43,7 +43,7 @@ GLuint Shader::compileShader(const std::string& path, GLenum type)
 std::string Shader::getSourceFromFile(const std::string& path)
 {
     std::ifstream shaderFile;
-    shaderFile.exceptions(std::ifstream::badbit);
+    shaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
     try
     {
         shaderFile.open(path);

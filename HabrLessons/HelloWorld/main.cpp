@@ -57,16 +57,14 @@ int main()
 
     // @formatter:off 
     GLfloat vertices[] = {
-         0.5f,  0.5f, 0.0f, //Верхний правый угол.
-         0.5f, -0.5f, 0.0f, //Нижний правый угол.
-        -0.5f, -0.5f, 0.0f, //Нижний левый угол.
-        -0.5f,  0.5f, 0.0f  //Верхний левый угол.
+         0.0f,  0.5f, 0.0f,     1.0f, 0.0f, 0.0f,   //Верхний угол.
+         0.5f, -0.5f, 0.0f,     0.0f, 1.0f, 0.0f,   //Нижний правый угол.
+        -0.5f, -0.5f, 0.0f,     0.0f, 0.0f, 1.0f    //Нижний левый угол.
     };
 
     GLuint indices[] = {
         //Помните, что мы начинаем с 0!
-        0, 1, 3, //Первый треугольник.
-        1, 2, 3  //Второй треугольник.
+        0, 1, 2, //Первый треугольник.
     };
     // @formatter:on 
 
@@ -85,8 +83,12 @@ int main()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
     // 4. Устанавливаем указатели на вершинные атрибуты.
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+    // 4.0 Координаты.
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);
     glEnableVertexAttribArray(0);
+    // 4.1 Цвет.
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(1);
     // 5. Отвязываем VAO.
     glBindVertexArray(0);
 
@@ -105,12 +107,6 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
 
         shader.useProgram();
-
-        GLfloat time = glfwGetTime();
-        GLfloat greenValue = abs(sin(std::fmod(time * 12, 1.0f) + 0.0f));
-        GLint vertexColorLocation = glGetUniformLocation(shader.program, "ourColor");
-        glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
-
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (GLvoid*)0);
         glBindVertexArray(0);
