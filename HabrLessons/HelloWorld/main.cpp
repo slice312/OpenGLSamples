@@ -10,10 +10,12 @@
 #include "Shader.h"
 
 
+static const GLuint WIDTH = 800, HEIGHT = 600;
+
+
 void keyCallback(GLFWwindow* window, int key, int scanCode, int action, int mode);
 
 
-static const GLuint WIDTH = 800, HEIGHT = 600;
 
 
 int main()
@@ -55,7 +57,7 @@ int main()
     Shader shader("resources/shaders/core.vert",
                   "resources/shaders/core.frag");
 
-    // @formatter:off 
+    // @formatter:off
     GLfloat vertices[] = {
          0.0f,  0.5f, 0.0f,     1.0f, 0.0f, 0.0f,   //Верхний угол.
          0.5f, -0.5f, 0.0f,     0.0f, 1.0f, 0.0f,   //Нижний правый угол.
@@ -66,7 +68,7 @@ int main()
         //Помните, что мы начинаем с 0!
         0, 1, 2, //Первый треугольник.
     };
-    // @formatter:on 
+    // @formatter:on
 
 
     GLuint VBO, EBO, VAO;

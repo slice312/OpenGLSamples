@@ -1,6 +1,6 @@
 #include  <iostream>
 
-// GLEW
+//GLEW (нужно подключать до GLFW)
 #define GLEW_STATIC
 #include <GL/glew.h>
 
@@ -10,7 +10,7 @@
 #include "Shader.h"
 
 
-const GLint WIDTH = 800, HEIGHT = 600;
+static const GLuint WIDTH = 800, HEIGHT = 600;
 
 
 int main()
