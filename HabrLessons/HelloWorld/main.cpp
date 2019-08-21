@@ -110,7 +110,7 @@ int main()
         GLint offsetUniformLocation = glGetUniformLocation(shader.program, "offset");
         glUniform1f(offsetUniformLocation, 0.45f);
         glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (GLvoid*)0);
+        glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (GLvoid*)0);
         glBindVertexArray(0);
 
         glfwSwapBuffers(window);
