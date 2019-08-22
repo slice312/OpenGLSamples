@@ -81,7 +81,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)GraphicCommon;$(SolutionDir)External Libraries\SOIL2\src;$(SolutionDir)External Libraries\GLFW32\include;$(SolutionDir)External Libraries\GLEW\include;$(SolutionDir)External Libraries\glm-0.9.9.5;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)GraphicCommon;$(SolutionDir)External Libraries\SOIL2\src;$(SolutionDir)External Libraries\glm-0.9.9.5;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

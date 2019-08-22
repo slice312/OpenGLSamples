@@ -1,51 +1,13 @@
-#include  <iostream>
+#include <iostream>
 
-//GLEW (нужно подключать до GLFW)
-#define GLEW_STATIC
-#include <GL/glew.h>
-
-//GLFW
-#include <GLFW/glfw3.h>
-
+#include "common_funcs.h"
 #include "Shader.h"
 
-
-static const GLuint WIDTH = 800, HEIGHT = 600;
 
 
 int main()
 {
-#pragma region INIT
-    glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-
-    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "OpenGL learn", nullptr, nullptr);
-    if (window == nullptr)
-    {
-        std::cout << "Failed to create GLFW Window" << std::endl;
-        glfwTerminate();
-        return EXIT_FAILURE;
-    }
-    glfwMakeContextCurrent(window);
-    glfwSetWindowPos(window, 200, 100);
-
-    glewExperimental = GL_TRUE;
-    if (glewInit() != GLEW_OK)
-    {
-        std::cout << "Failed to initialize GLEW" << std::endl;
-        glfwTerminate();
-        return EXIT_FAILURE;
-    }
-
-    int screenWidth, screenHeight;
-    glfwGetFramebufferSize(window, &screenWidth, &screenHeight);
-    glViewport(0, 0, screenWidth, screenHeight);
-#pragma endregion GLFW initialization
-
+    GLFWwindow* window = common::defaultGlfwWindowInit();
 
     Shader shader("resources/shaders/core.vert",
                   "resources/shaders/core.frag");

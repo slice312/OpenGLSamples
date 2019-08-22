@@ -1,11 +1,7 @@
-#include  <iostream>
+#include <iostream>
 
-//GLEW
-#define GLEW_STATIC
-#include <GL/glew.h>
-
-//GLFW
-#include <GLFW/glfw3.h>
+#include "common_funcs.h"
+#include "Shader.h"
 
 //GLM
 #include <glm/glm.hpp>
@@ -15,42 +11,11 @@
 
 #include "SOIL2/SOIL2.h"
 
-#include "Shader.h"
 
-
-const GLint WIDTH = 800, HEIGHT = 600;
 
 int main()
 {
-#pragma region INIT
-    glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-
-    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "OpenGL learn", nullptr, nullptr);
-    if (window == nullptr)
-    {
-        std::cout << "Failed to create GLFW Window" << std::endl;
-        glfwTerminate();
-        return EXIT_FAILURE;
-    }
-    glfwMakeContextCurrent(window);
-    glfwSetWindowPos(window, 200, 100);
-
-    glewExperimental = GL_TRUE;
-    if (glewInit() != GLEW_OK)
-    {
-        std::cout << "Failed to initialize GLEW" << std::endl;
-        return EXIT_FAILURE;
-    }
-
-    int screenWidth, screenHeight;
-    glfwGetFramebufferSize(window, &screenWidth, &screenHeight);
-    glViewport(0, 0, screenWidth, screenHeight);
-#pragma endregion
+    GLFWwindow* window = common::defaultGlfwWindowInit();
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -62,21 +27,22 @@ int main()
     //Set up vertex data and buffers and attribute pointers.
     GLfloat vertices[] =
     {
-        //position               //color                  //texture coordinates
-        0.5f, 0.5f, 0.0f,       1.0f, 0.0f, 0.0f,         1.0f, 1.0f, //top right
-        0.5f, -0.5f, 0.0f,      0.0f, 1.0f, 0.0f,         1.0f, 0.0f, //bottom right
-        -0.25f, -0.5f, 0.0f,    0.0f, 0.0f, 1.0f,         0.0f, 0.0f, //bottom left
-        -0.25f, 0.5f, 0.0f,     1.0f, 1.0f, 0.0f,         0.0f, 1.0f //top left
+        //position              //color                 //texture coordinates
+        0.5f, 0.5f, 0.0f,       1.0f, 0.0f, 0.0f,       1.0f, 1.0f, //top right
+        0.5f, -0.5f, 0.0f,      0.0f, 1.0f, 0.0f,       1.0f, 0.0f, //bottom right
+        -0.25f, -0.5f, 0.0f,    0.0f, 0.0f, 1.0f,       0.0f, 0.0f, //bottom left
+        -0.25f, 0.5f, 0.0f,     1.0f, 1.0f, 0.0f,       0.0f, 1.0f  //top left
     };
-    // @formatter:on
 
 
     GLuint indices[] =
     {
         // Note that we start from 0!
         0, 1, 3, // First Triangle
-        1, 2, 3 // Second Triangle
+        1, 2, 3  // Second Triangle
     };
+    // @formatter:on
+
 
     GLuint VAO, VBO, EBO;
     glGenVertexArrays(1, &VAO);
