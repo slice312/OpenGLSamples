@@ -1,8 +1,9 @@
 #include <iostream>
 
+#include <SOIL2/SOIL2.h>
+
 #include "common_funcs.h"
 #include "Shader.h"
-
 
 
 void keyCallback(GLFWwindow* window, int key, int scanCode, int action, int mode);
@@ -27,6 +28,14 @@ int main()
         0.5f, 1.0f  // Верхняя центральная сторона
     };
     // @formatter:on
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    //Load, create texture and generate mipmaps.
+    int width, height;
+    unsigned char* image = SOIL_load_image("resources/images/image2.png",
+        &width, &height, nullptr, SOIL_LOAD_RGBA);
 
 
 #pragma region GAME_LOOP
